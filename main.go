@@ -59,5 +59,5 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println("Successfully sorted your keys alphabetically:", path)
+	fmt.Println("Successfully sorted your keys lexicographically:", path)
 }
