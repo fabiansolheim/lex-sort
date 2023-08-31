@@ -1,1 +1,1 @@
-Small application to lexicographically sort a nested JSON file. 
+lex-sort is a small application to lexicographically sort a nested JSON file. 

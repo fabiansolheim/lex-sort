@@ -31,7 +31,7 @@ func sortMapKeys(inputMap map[string]interface{}) map[string]interface{} {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: i18n-sort <path_to_json_file>")
+		fmt.Println("Usage: lex-sort <path_to_json_file>")
 		return
 	}
 
