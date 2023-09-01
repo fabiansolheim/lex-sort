@@ -3,8 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+	"path/filepath"
 	"sort"
+	"strings"
 )
 
 func sortMapKeys(inputMap map[string]interface{}) map[string]interface{} {
@@ -31,33 +34,46 @@ func sortMapKeys(inputMap map[string]interface{}) map[string]interface{} {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: lex-sort <path_to_json_file>")
+		fmt.Println("Usage: lex-sort <path_to_directory")
 		return
 	}
 
 	path := os.Args[1]
-	contents, err := os.ReadFile(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
-		panic(err)
+		log.Fatal("Error reading directory:", err)
 	}
 
-	var data map[string]interface{}
-	err = json.Unmarshal(contents, &data)
-	if err != nil {
-		panic(err)
+	for _, file := range files {
+		filename := file.Name()
+
+		if !strings.HasSuffix(filename, ".json") {
+			continue
+		}
+
+		fullPath := filepath.Join(path, filename)
+
+		contents, err := os.ReadFile(fullPath)
+		if err != nil {
+			log.Fatalf("Error reading file %s: %v", fullPath, err)
+		}
+
+		var data map[string]interface{}
+		if err := json.Unmarshal(contents, &data); err != nil {
+			log.Fatalf("Error unmarshalling JSON from %s: %v", fullPath, err)
+		}
+
+		sortedData := sortMapKeys(data)
+
+		sortedJSON, err := json.MarshalIndent(sortedData, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshalling sorted JSON: %v", err)
+		}
+
+		if err := os.WriteFile(fullPath, sortedJSON, 0644); err != nil {
+			log.Fatalf("Error writing sorted JSON to %s: %v", fullPath, err)
+		}
+
+		fmt.Println("Successfully sorted keys lexicographically:", filename)
 	}
-
-	sortMapKeys(data)
-
-	sortedJSON, err := json.MarshalIndent(data, "", "  ")
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.WriteFile(path, sortedJSON, 0644)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Successfully sorted your keys lexicographically:", path)
 }
