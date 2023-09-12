@@ -33,10 +33,12 @@ func sortMapKeys(inputMap map[string]interface{}) map[string]interface{} {
 }
 
 func main() {
+
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: lex-sort <path_to_directory")
+		fmt.Printf("Usage: %s <path_to_directory", os.Args[0])
 		return
 	}
+
 
 	path := os.Args[1]
 	files, err := os.ReadDir(path)
